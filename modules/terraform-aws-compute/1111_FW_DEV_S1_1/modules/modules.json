@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"ec2_instance","Source":"registry.terraform.io/OT-CLOUD-KIT/ec2-instance/aws","Version":"0.0.3","Dir":".terraform/modules/ec2_instance"},{"Key":"sg","Source":"registry.terraform.io/OT-CLOUD-KIT/security-groups/aws","Version":"1.0.0","Dir":".terraform/modules/sg"}]}

@@ -1,0 +1,55 @@
+# =========================
+# Terraform core
+# =========================
+.terraform/
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Ignore provider lock file if this is NOT a reusable module repo
+.terraform.lock.hcl
+
+# =========================
+# Terraform Providers (CRITICAL)
+# =========================
+**/providers/*
+**/registry.terraform.io/*
+
+# =========================
+# Terraform plan files
+# =========================
+*.tfplan
+*.plan
+
+# =========================
+# CLI config files
+# =========================
+.terraformrc
+terraform.rc
+
+# =========================
+# Environment files
+# =========================
+*.auto.tfvars
+*.tfvars
+*.tfvars.json
+
+# If you want to allow example tfvars:
+!example.tfvars
+
+# =========================
+# OS / Editor junk
+# =========================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# =========================
+# Logs
+# =========================
+*.log
+
