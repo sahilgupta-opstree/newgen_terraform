@@ -1,5 +1,5 @@
 module "iam_role" {
-  source = "/home/sahilgupta/OT-CLOUD-TF-MODULE/terraform-aws-iam-role"
+  source = "git::https://github.com/sahilgupta-opstree/newgen_terraform.git//modules/terraform-aws-iam-role?ref=feature"
 
   region               = var.region
   roles                = var.roles
