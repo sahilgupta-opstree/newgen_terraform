@@ -9,7 +9,6 @@ locals {
   subnets = [
     for i in range(length(var.subnet_names)) : {
       name = var.subnet_names[i]
-# name  = "${var.env}-${var.program}-${var.subnet_names[i]}"
       cidr  = var.subnet_cidrs[i]
       az    = var.subnet_azs[i]
       index = i
@@ -40,25 +39,6 @@ locals {
 }
 
 
-
-#################### NACL ########################
-
-# locals {
-#   nacls = {
-#     for i in range(length(var.nacl_names)) :
-#     var.nacl_names[i] => "${var.env}-${var.nacl_names[i]}-nacl"
-#   }
-
-#   nacl_config = {
-#     for nacl_key, nacl_value in var.nacl_rules :
-#     nacl_key => {
-#       name       = local.nacls[nacl_key]
-#       subnet_ids = [for index in nacl_value.subnet_index : aws_subnet.subnets[index].id]
-#       ingress    = nacl_value.ingress_rules
-#       egress     = nacl_value.egress_rules
-#     }
-#   }
-# }
 
 locals {
   nacl_config = {
@@ -116,26 +96,3 @@ locals {
   ])
 }
 
-# locals {
-#   gateway_endpoints = {
-#     s3 = "com.amazonaws.ap-southeast-1.s3"
-#   }
-  
-# }
-
-# locals {
-#   s3_gateway_rt_key = var.endpoint_route_table_id # jo key tumhare local.route_tables me hai
-# }
-
-# locals {
-#   interface_endpoints = {
-#     ec2          = "com.amazonaws.ap-southeast-1.ec2"
-#     ecr_dkr      = "com.amazonaws.ap-southeast-1.ecr.dkr"
-#     ecr_api      = "com.amazonaws.ap-southeast-1.ecr.api"
-#     sts          = "com.amazonaws.ap-southeast-1.sts"
-#     ssm          = "com.amazonaws.ap-southeast-1.ssm"
-#     ssmmessages  = "com.amazonaws.ap-southeast-1.ssmmessages"
-#     ec2messages  = "com.amazonaws.ap-southeast-1.ec2messages"
-#     codecommit   = "com.amazonaws.ap-southeast-1.codecommit"
-#   }
-# }

@@ -9,11 +9,6 @@ output "vpc_cidr_block" {
   description = "CIDR block of the VPC"
 }
 
-# output "vpc_endpoint" {
-#   value       = module.network.name_vpc_endpoint.tags.name
-#   description = "CIDR block of the VPC"
-# }
-
 output "igw_id" {
   value       = module.network.igw_id
   description = "Internet Gateway ID"

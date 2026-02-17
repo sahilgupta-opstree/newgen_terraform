@@ -140,41 +140,6 @@ resource "aws_route_table_association" "rt_assoc" {
   ].id
 }
 
-# resource "aws_route_table" "private_rt" {
-#   vpc_id = aws_vpc.vpc.id
-
-#   route {
-#     cidr_block     = var.private_rt_cidr_block
-#     nat_gateway_id = var.create_nat_gateway ? aws_nat_gateway.nat_gateway[0].id : null
-#   }
-
-#   tags = merge(
-#     {
-#       Name = "${local.base_name}-private-rt"
-#     },
-#     local.common_tags
-#   )
-# }
-
-# resource "aws_route_table_association" "public_rt_association" {
-#   for_each = { for idx, subnet in aws_subnet.subnets : idx => subnet.id }
-
-#   subnet_id      = each.value
-#   route_table_id = aws_route_table.public_rt.id
-# }
-
-
-# resource "aws_route_table_association" "private_rt_association" {
-#   for_each = {
-#     for idx, subnet in aws_subnet.subnets : idx => subnet.id
-#     if !(contains(var.public_subnet_indexes, idx))
-#   }
-
-
-#   subnet_id      = each.value
-#   route_table_id = aws_route_table.private_rt.id
-# }
-
 ######################################
 # NACLs
 ######################################
@@ -259,81 +224,6 @@ resource "aws_route53_zone" "vpc_route53" {
   )
 }
 
-######################################
-# VPC Endpoints
-######################################
-
-
-# resource "aws_vpc_endpoint" "gateway" {
-#   for_each = local.gateway_endpoints
-
-#   vpc_id            = aws_vpc.vpc.id
-#   service_name      = data.aws_vpc_endpoint_service.gateway[each.key].service_name
-#   vpc_endpoint_type = "Gateway"
-
-#   route_table_ids = [
-#     aws_route_table.rt[local.s3_gateway_rt_key].id
-#   ]
-
-#   tags = {
-#     Name =  var.name_vpc_endpoint
-#   }
-# }
-
-
-
-
-# resource "aws_vpc_endpoint" "interface" {
-#   for_each = {
-#     s3 = "com.amazonaws.ap-southeast-1.s3"
-#   }
-
-#   vpc_id              = aws_vpc.vpc.id
-#   service_name        = each.value
-#   vpc_endpoint_type   = "Interface"
-#   subnet_ids          = [var.subnet_id]
-#   security_group_ids  = [var.sg_id]
-#   private_dns_enabled = true
-
-#   tags = {
-#     Name = var.name_vpc_endpoint
-#   }
-# }
-
-
-# resource "aws_vpc_endpoint" "ec2" {
-#   count               = var.enable_ec2_endpoint ? 1 : 0
-#   vpc_id              = aws_vpc.vpc.id
-#   service_name        = var.service_name_ec2
-#   vpc_endpoint_type   = var.ec2_endpoint_type
-#   subnet_ids          = local.selected_subnet_ids
-#   private_dns_enabled = var.ec2_private_dns_enabled
-#   security_group_ids  = var.endpoint_sg_id != "" ? [var.endpoint_sg_id] : null
-
-#   tags = merge(
-#     {
-#       Name = "${local.base_name}-ec2-endpoint"
-#     },
-#     local.common_tags
-#   )
-# }
-
-# resource "aws_vpc_endpoint" "nlb" {
-#   count               = var.enable_nlb_endpoint ? 1 : 0
-#   vpc_id              = aws_vpc.vpc.id
-#   service_name        = var.service_name_nlb
-#   vpc_endpoint_type   = var.nlb_endpoint_type
-#   subnet_ids          = var.nlb_endpoint_type == "Interface" ? local.all_subnet_ids : null
-#   private_dns_enabled = var.nlb_private_dns_enabled
-#   security_group_ids  = var.nlb_endpoint_type == "Interface" && var.endpoint_sg_id != "" ? [var.endpoint_sg_id] : null
-
-#   tags = merge(
-#     {
-#       Name = "${local.base_name}-nlb-endpoint"
-#     },
-#     local.common_tags
-#   )
-# }
 
 ######################################
 # ALB

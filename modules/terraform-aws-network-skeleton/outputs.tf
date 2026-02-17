@@ -58,48 +58,6 @@ output "route53_zone_id" {
 }
 
 # ----------------------------
-# VPC Endpoint Outputs
-# ----------------------------
-
-# output "gateway_endpoints" {
-#   description = "Gateway VPC endpoints keyed by service"
-#   value = {
-#     for k, v in aws_vpc_endpoint.gateway :
-#     k => {
-#       id              = v.id
-#       service_name    = v.service_name
-#       route_table_ids = v.route_table_ids
-#     }
-#   }
-# }
-
-
-
-# output "ec2_endpoint" {
-#   description = "Details of the EC2 VPC endpoint"
-#   value = var.enable_ec2_endpoint ? {
-#     id              = aws_vpc_endpoint.ec2[0].id
-#     service_name    = aws_vpc_endpoint.ec2[0].service_name
-#     dns_entries     = aws_vpc_endpoint.ec2[0].dns_entry
-#     subnet_ids      = aws_vpc_endpoint.ec2[0].subnet_ids
-#     security_groups = aws_vpc_endpoint.ec2[0].security_group_ids
-#     private_dns     = aws_vpc_endpoint.ec2[0].private_dns_enabled
-#   } : null
-# }
-
-# output "nlb_endpoint" {
-#   description = "Details of the NLB VPC endpoint"
-#   value = var.enable_nlb_endpoint ? {
-#     id              = aws_vpc_endpoint.nlb[0].id
-#     service_name    = aws_vpc_endpoint.nlb[0].service_name
-#     dns_entries     = aws_vpc_endpoint.nlb[0].dns_entry
-#     subnet_ids      = aws_vpc_endpoint.nlb[0].subnet_ids
-#     security_groups = aws_vpc_endpoint.nlb[0].security_group_ids
-#     private_dns     = aws_vpc_endpoint.nlb[0].private_dns_enabled
-#   } : null
-# }
-
-# ----------------------------
 # ALB Outputs
 # ----------------------------
 
@@ -186,25 +144,6 @@ output "public_subnet_ids" {
 output "route_table_names" {
   value = var.route_table_names
 }
-# output "private_subnet_ids" {
-#   description = "List of private subnet IDs"
-#   value       = local.all_subnet_ids
-# }
-
-# output "nacl_ids" {
-#   value = {
-#     for k, v in aws_network_acl.nacls :
-#     k => v.id
-#   }
-# }
-
-
-# output "route_table_ids" {
-#   value = {
-#     for k, rt in aws_route_table.public :
-#     k => rt.id
-#   }
-# }
 
 output "application_subnet_ids" {
   description = "List of application subnet IDs"

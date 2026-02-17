@@ -199,30 +199,6 @@ variable "service_name_s3" {
   default     = ""
 }
 
-# variable "vpc_endpoint_type" {
-#   description = "to assign the type of endpoint"
-#   type        = string
-# }
-
-# variable "name_vpc_endpoint" {
-#   description = "to assign the name of endpoint"
-#   type        = string
-# }
-# variable "s3_endpoint_type" {
-#   type        = string
-#   default     = "Gateway"
-# }
-
-# variable "enable_ec2_endpoint" {
-#   type        = bool
-#   default     = false
-# }
-
-# variable "service_name_ec2" {
-#   type        = string
-#   default     = ""
-# }
-
 variable "ec2_endpoint_type" {
   type        = string
   default     = "Interface"
