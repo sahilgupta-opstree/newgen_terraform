@@ -1,5 +1,5 @@
 module "network" {
-  source               = "/home/sahilgupta/OT-CLOUD-TF-MODULE/terraform-aws-network-skeleton"
+  source = "git::https://github.com/sahilgupta-opstree/newgen_terraform.git//modules/terraform-aws-network-skeleton?ref=feature"
   #version              = "1.0.6"
   vpc_cidr             = var.vpc_cidr
   instance_tenancy     = var.instance_tenancy
