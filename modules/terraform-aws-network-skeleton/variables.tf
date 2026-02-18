@@ -104,10 +104,10 @@ variable "route_table_names" {
   default     = []
 }
 
-variable "endpoint_route_table_id" {
-  description = "Route table ID to associate with the S3 Gateway VPC endpoint"
-  type        = string
-}
+#variable "endpoint_route_table_id" {
+#  description = "Route table ID to associate with the S3 Gateway VPC endpoint"
+#  type        = string
+#}
 
 ########################## NAT ######################################
 variable "create_nat_gateway" {
