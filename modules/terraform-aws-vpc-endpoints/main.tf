@@ -1,31 +1,20 @@
-resource "aws_vpc_endpoint" "gateway" {
-  for_each = local.gateway_endpoints
+resource "aws_vpc_endpoint" "this" {
+  for_each = var.endpoints
 
   vpc_id            = var.vpc_id
-  service_name      = data.aws_vpc_endpoint_service.gateway[each.key].service_name
-  vpc_endpoint_type = "Gateway"
+  service_name      = each.value.service_name
+  vpc_endpoint_type = each.value.type
 
-  route_table_ids = [
-    var.endpoint_route_table_id
-  ]
+  route_table_ids     = each.value.type == "Gateway" ? try(each.value.route_table_ids, null) : null
+  subnet_ids          = each.value.type == "Interface" ? try(each.value.subnet_ids, null) : null
+  security_group_ids  = each.value.type == "Interface" ? try(each.value.security_group_ids, null) : null
+  private_dns_enabled = each.value.type == "Interface" ? try(each.value.private_dns, true) : null
 
-  tags = {
-    Name =  var.name_vpc_endpoint
-  }
-}
-
-resource "aws_vpc_endpoint" "interface" {
-  for_each = local.interface_endpoints
-
-  vpc_id            = var.vpc_id
-  service_name      = data.aws_vpc_endpoint_service.interface[each.key].service_name
-  vpc_endpoint_type = "Interface"
-
-  subnet_ids         = [var.interface_subnet_id]
-  security_group_ids = [var.interface_sg_id]
-  private_dns_enabled = true
-
-  tags = {
-    Name =  var.name_vpc_endpoint
-  }
+  tags = merge(
+    var.common_tags,
+    try(each.value.tags, {}),
+    {
+      Name = each.key
+    }
+  )
 }

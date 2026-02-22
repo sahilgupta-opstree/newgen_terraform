@@ -1,15 +1,13 @@
-# output "this_endpoint" {
-#   value = aws_vpc_endpoint.this_endpoint.arn
-# }
+output "endpoint_ids" {
+  value = {
+    for k, v in aws_vpc_endpoint.this :
+    k => v.id
+  }
+}
 
-# output "endpoint_arn" {
-#   value       = aws_vpc_endpoint.this_endpoint.arn
-#   description = "ARN of the VPC endpoint"
-# }
-
-# output "endpoint_id" {
-#   value       = aws_vpc_endpoint.this_endpoint.id
-#   description = "ID of the VPC endpoint"
-# }
-
-
+output "endpoint_arns" {
+  value = {
+    for k, v in aws_vpc_endpoint.this :
+    k => v.arn
+  }
+}
