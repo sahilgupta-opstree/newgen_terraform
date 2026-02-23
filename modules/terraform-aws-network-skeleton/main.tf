@@ -10,7 +10,7 @@ resource "aws_vpc" "vpc" {
   tags = merge(
     {
       Name = "${local.base_name}-vpc"
-      customer_code = var.Customer_Code
+      Customer_Code = var.Customer_Code
       "kubernetes.io/cluster/${var.env}-${var.program}-eks-cluster" = "owned"
 
     },
