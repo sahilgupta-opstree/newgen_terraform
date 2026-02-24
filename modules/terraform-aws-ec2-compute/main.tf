@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "ap-south-1"
-}
-
 ############################################################
 # EC2 Instance
 ############################################################
@@ -124,51 +120,30 @@ resource "aws_security_group" "sg" {
     Name = each.value
   }
 }
-resource "aws_security_group_rule" "ssh_rule" {
+
+resource "aws_security_group_rule" "ingress_rules" {
+
   for_each = {
-    for sg in var.security_groups :
-    sg => sg
-    if can(regex("LINUX|FW", sg))
+    for pair in flatten([
+      for rule_key, rule_value in var.security_group_ports : [
+        for sg_key, sg_val in aws_security_group.sg : {
+          rule_name = rule_key
+          sg_key    = sg_key
+          sg_id     = sg_val.id
+          rule      = rule_value
+        }
+        if can(regex(rule_value.name_regex, sg_key))
+      ]
+    ]) : "${pair.rule_name}-${pair.sg_key}" => pair
   }
 
   type              = "ingress"
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
+  from_port         = each.value.rule.from_port
+  to_port           = each.value.rule.to_port
+  protocol          = each.value.rule.protocol
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.sg[each.key].id
+  security_group_id = each.value.sg_id
 }
-
-resource "aws_security_group_rule" "rdp_rule" {
-  for_each = {
-    for sg in var.security_groups :
-    sg => sg
-    if can(regex("UTL", sg))
-  }
-
-  type              = "ingress"
-  from_port         = 3389
-  to_port           = 3389
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.sg[each.key].id
-}
-
-resource "aws_security_group_rule" "ad_ports" {
-  for_each = {
-    for sg in var.security_groups :
-    sg => sg
-    if can(regex("AD-SG", sg))
-  }
-
-  type              = "ingress"
-  from_port         = 88
-  to_port           = 88
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.sg[each.key].id
-}
-
 ###############################
 # RT Attach to ENI
 ##############################

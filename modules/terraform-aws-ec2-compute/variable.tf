@@ -36,3 +36,13 @@ variable "firewall_instance_key" {
   description = "Key name of firewall EC2 instance"
   type        = string
 }
+
+variable "security_group_ports" {
+  description = "Ingress port configuration mapped to SG name patterns"
+  type = map(object({
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    name_regex  = string
+  }))
+}
