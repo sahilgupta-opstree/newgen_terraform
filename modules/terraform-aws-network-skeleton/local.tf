@@ -1,9 +1,23 @@
 locals {
-  base_name = "${trim(var.env, "-")}-${trim(var.program, "-")}"
-
-  common_tags = {
-    env   = var.env
-    owner = var.owner
+  base_name = "${trim(var.program, "-")}"
+    # Only for VPC
+  vpc_tags = {
+    Customer-Code = var.vpc_tags
+  }
+  
+  # Only for Route Tables
+  route_table_tags = {
+    CC = var.route_table_tags
+  }
+  
+  # Only for Subnets
+  subnet_tags = {
+    Project = var.subnet_tags
+  }
+  
+  # Only for Internet Gateway
+  igw_tags = {
+    CC-Project = var.igw_tags
   }
 
   subnets = [

@@ -10,11 +10,8 @@ resource "aws_vpc" "vpc" {
   tags = merge(
     {
       Name = "${local.base_name}-vpc"
-      Customer_Code = var.Customer_Code
-      "kubernetes.io/cluster/${var.env}-${var.program}-eks-cluster" = "owned"
-
     },
-    local.common_tags
+    local.vpc_tags
   )
 }
 
@@ -31,10 +28,8 @@ resource "aws_subnet" "subnets" {
   tags = merge(
     {
       Name = local.subnets[count.index].name
-      "kubernetes.io/cluster/${var.env}-${var.program}-eks-cluster" = "owned"
-      Project = var.Project
     },
-    local.common_tags
+    local.subnet_tags
   )
 }
 
@@ -48,9 +43,8 @@ resource "aws_internet_gateway" "igw" {
   tags = merge(
     {
       Name = "${local.base_name}-igw"
-      CC-Project = var.CC-Project
     },
-    local.common_tags
+    local.igw_tags
   )
 }
 
@@ -73,7 +67,6 @@ resource "aws_vpn_gateway" "vgw" {
     {
       Name = var.vgw_name
     },
-    local.common_tags
   )
 }
 
@@ -88,15 +81,14 @@ resource "aws_eip" "nat" {
     {
       Name = "${local.base_name}-nat-eip-${count.index + 1}"
     },
-    local.common_tags
   )
 
   depends_on = [aws_internet_gateway.igw]
 }
 
-######################################
-# NAT Gateways
-######################################
+# ######################################
+# # NAT Gateways
+# ######################################
 resource "aws_nat_gateway" "nat_gateway" {
   count         = var.create_nat_gateway ? var.nat_gateway_count : 0
   subnet_id = local.all_subnet_ids[count.index]
@@ -106,7 +98,6 @@ resource "aws_nat_gateway" "nat_gateway" {
     {
       Name = "${local.base_name}-nat-${count.index + 1}"
     },
-    local.common_tags
   )
 
   depends_on = [aws_internet_gateway.igw]
@@ -123,8 +114,8 @@ resource "aws_route_table" "rt" {
 
   tags = merge(
     { Name = each.key },
-    local.common_tags,
-    {CC = var.CC}
+    #local.common_tags,
+    local.route_table_tags
   )
 }
 
@@ -156,7 +147,6 @@ resource "aws_network_acl" "nacls" {
     {
       Name = each.value.name
     },
-    local.common_tags
   )
 
   dynamic "ingress" {
@@ -223,7 +213,6 @@ resource "aws_route53_zone" "vpc_route53" {
     {
       Name = "${local.base_name}-route53"
     },
-    local.common_tags
   )
 }
 
@@ -246,7 +235,6 @@ resource "aws_key_pair" "key_pair" {
     {
       Name = "${local.base_name}-key"
     },
-    local.common_tags
   )
 }
 

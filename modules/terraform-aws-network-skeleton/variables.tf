@@ -1,22 +1,35 @@
-
-
-variable "env" {
+variable "vpc_tags" {
   type = string
-  default = "dev"
+  default = ""
   
 }
 
 variable "program" {
   type = string
-  default = "otcloud"
+  default = ""
   
 }
 
-variable "owner" {
+variable "route_table_tags" {
   type = string
-  default = "opstree"
+  default = ""
   
 }
+
+variable "subnet_tags" {
+  type = string
+  default = ""
+  
+}
+
+variable "igw_tags" {
+  type = string
+  default = ""
+  
+}
+
+
+
 ###################### VPC Configuration ####################
 
 variable "vpc_cidr" {
@@ -334,29 +347,16 @@ variable "private_key_rsa_bits" {
   default     = 4096
 }
 
-variable "Customer_Code" {
-  type = string
-}
-
-variable "CC" {
-  type = string
-}
-
-variable "Project" {
-  type = string
-}
-
-variable "CC-Project" {
-  type = string
-}
-
 variable "key_output_dir" {
   description = "Directory to write the generated private key"
   type        = string
   default     = "./keys"
 }
 
-
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
 
 variable "nat_gateway_count" {
   description = <<EOT
