@@ -29,7 +29,6 @@ resource "aws_instance" "ec2" {
   tags = merge(
     {
       Name        = each.key
-      PROVISIONER = "Terraform"
     },
     each.value.tags
   )
