@@ -113,7 +113,6 @@ resource "aws_security_group" "sg" {
 
   name        = each.value
   description = "Security Group ${each.value}"
-  vpc_id      = var.vpc_id
 
   tags = {
     Name = each.value
