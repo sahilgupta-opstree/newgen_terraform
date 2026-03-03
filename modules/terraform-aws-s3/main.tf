@@ -9,12 +9,9 @@ resource "aws_s3_bucket" "main" {
   bucket_prefix       = var.name == null ? var.bucket_prefix : null
   force_destroy       = var.force_destroy
   object_lock_enabled = var.object_lock_enabled
-  tags = merge(
-    {
-      Name = "${local.base_name}-bucket"
-    },
-    local.common_tags
-  )
+  tags = {
+  Name = var.name
+}
   }
 
 
