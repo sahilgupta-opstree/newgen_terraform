@@ -2,14 +2,6 @@ variable "region" {
   type = string
 }
 
-variable "env" {
-  type = string
-}
-
-variable "app" {
-  type = string
-}
-
 variable "roles" {
   description = "Map of IAM roles with managed and custom policies"
   type = map(object({
