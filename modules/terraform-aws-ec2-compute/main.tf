@@ -154,3 +154,54 @@ resource "aws_route" "private_default_to_firewall" {
   destination_cidr_block = "0.0.0.0/0"
   network_interface_id   = aws_instance.ec2[var.firewall_instance_key].primary_network_interface_id
 }
+
+#################################
+# Key Pairs
+#################################
+resource "tls_private_key" "instance_keys" {
+  for_each = var.ec2_instances
+
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "instance_keys" {
+  for_each = var.ec2_instances
+
+  key_name   = each.value.key_name
+  public_key = tls_private_key.instance_keys[each.key].public_key_openssh
+}
+
+resource "local_file" "pem_files" {
+  for_each = var.ec2_instances
+
+  filename        = "${path.root}/${each.value.key_name}.pem"
+  content         = tls_private_key.instance_keys[each.key].private_key_pem
+  file_permission = "0400"
+}
+
+resource "aws_instance" "ec2" {
+  for_each = var.ec2_instances
+
+  ami           = each.value.ami_id
+  instance_type = each.value.instance_type
+
+  subnet_id = each.value.subnet_id
+
+  key_name = aws_key_pair.instance_keys[each.key].key_name
+
+  vpc_security_group_ids = each.value.security_groups
+
+  associate_public_ip_address = each.value.public_ip
+
+  root_block_device {
+    volume_size           = each.value.volume_size
+    volume_type           = each.value.volume_type
+    throughput            = each.value.throughput
+    encrypted             = each.value.encrypted_volume
+    delete_on_termination = each.value.delete_on_termination
+  }
+
+  tags = each.value.tags
+}
+
