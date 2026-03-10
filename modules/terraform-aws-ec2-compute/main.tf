@@ -13,7 +13,7 @@ resource "aws_instance" "ec2" {
     aws_security_group.sg[sg_name].id
   ]
   associate_public_ip_address = each.value.public_ip
-  key_name                    = each.value.key_name
+  key_name = aws_key_pair.instance_keys[each.key].key_name
   iam_instance_profile        = lookup(each.value, "iam_instance_profile", null)
 
   disable_api_termination = each.value.termination_protection
@@ -179,29 +179,3 @@ resource "local_file" "pem_files" {
   content         = tls_private_key.instance_keys[each.key].private_key_pem
   file_permission = "0400"
 }
-
-resource "aws_instance" "ec2" {
-  for_each = var.ec2_instances
-
-  ami           = each.value.ami_id
-  instance_type = each.value.instance_type
-
-  subnet_id = each.value.subnet_id
-
-  key_name = aws_key_pair.instance_keys[each.key].key_name
-
-  vpc_security_group_ids = each.value.security_groups
-
-  associate_public_ip_address = each.value.public_ip
-
-  root_block_device {
-    volume_size           = each.value.volume_size
-    volume_type           = each.value.volume_type
-    throughput            = each.value.throughput
-    encrypted             = each.value.encrypted_volume
-    delete_on_termination = each.value.delete_on_termination
-  }
-
-  tags = each.value.tags
-}
-
