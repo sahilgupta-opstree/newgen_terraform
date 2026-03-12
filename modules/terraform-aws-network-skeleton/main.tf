@@ -9,7 +9,7 @@ resource "aws_vpc" "vpc" {
 
   tags = merge(
     {
-      Name = "${local.base_name}-vpc"
+      Name = "${local.base_name}"
     },
     local.vpc_tags
   )
