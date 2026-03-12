@@ -1,57 +1,50 @@
-resource "aws_eks_node_group" "this" {
-  cluster_name    = var.cluster_name
-  node_group_name = var.node_group_name
-  node_role_arn   = var.node_role_arn
-  subnet_ids      = var.subnet_ids
-  capacity_type   = var.capacity_type
-  ami_type        = var.ami_type
+resource "aws_eks_node_group" "node_groups" {
+  for_each     = var.create_node_group ? var.node_groups : {}
+  cluster_name = var.cluster_name
+  tags = merge(
+    {
+      Name = format("%s-node_group", substr(each.key, 0, 12))
+    },
+    {
+      "Provisioner" = "Terraform"
+    },
+    each.value.tags
+  )
+  node_group_name      = substr(each.key, 0, 12)
+  node_role_arn        = var.node_role_arn
+  subnet_ids           = each.value.subnets
+  instance_types       = each.value.instance_type
+  disk_size            = each.value.disk_size
+  labels               = each.value.labels
+  capacity_type        = each.value.capacity_type
+  force_update_version = var.force_update_version
+  ami_type             = each.value.ami_type
 
   scaling_config {
-    desired_size = var.desired_size
-    min_size     = var.min_size
-    max_size     = var.max_size
+    desired_size = each.value.desired_capacity
+    max_size     = each.value.max_capacity
+    min_size     = each.value.min_capacity
   }
 
-  launch_template {
-    id      = var.launch_template_id
-    version = var.launch_template_version
+  dynamic "taint" {
+    for_each = each.value.taints
+
+    content {
+      key    = taint.value.key
+      value  = try(taint.value.value, null)
+      effect = taint.value.effect
+    }
   }
 
-  # Optional tags
-  tags = var.tags
+  lifecycle {
+    create_before_destroy = true
+    prevent_destroy       = false
+    ignore_changes        = [scaling_config.0.desired_size]
+
+  }
+
+  remote_access {
+    ec2_ssh_key               = each.value.ssh_key
+    source_security_group_ids = concat(each.value.security_group_ids)
+  }
 }
-
-# resource "aws_iam_role" "eks_nodegroup_role" {
-#   name = var.nodegroup_role_name
-
-#   assume_role_policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Effect = "Allow"
-#         Principal = {
-#           Service = "ec2.amazonaws.com"
-#         }
-#         Action = "sts:AssumeRole"
-#       }
-#     ]
-#   })
-
-#   tags = var.tags
-# }
-
-# resource "aws_iam_role_policy_attachment" "worker_node_policy" {
-#   role       = aws_iam_role.eks_nodegroup_role.name
-#   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-# }
-
-# resource "aws_iam_role_policy_attachment" "cni_policy" {
-#   role       = aws_iam_role.eks_nodegroup_role.name
-#   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-# }
-
-# resource "aws_iam_role_policy_attachment" "ecr_readonly_policy" {
-#   role       = aws_iam_role.eks_nodegroup_role.name
-#   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-# }
-
