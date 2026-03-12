@@ -13,12 +13,15 @@ resource "aws_eks_node_group" "node_groups" {
   node_group_name      = substr(each.key, 0, 12)
   node_role_arn        = var.node_role_arn
   subnet_ids           = each.value.subnets
-  instance_types       = each.value.instance_type
-  disk_size            = each.value.disk_size
+  
+   launch_template {
+    id      = var.launch_template_id
+    version = "$Latest"
+  }
+
   labels               = each.value.labels
   capacity_type        = each.value.capacity_type
   force_update_version = var.force_update_version
-  ami_type             = each.value.ami_type
 
   scaling_config {
     desired_size = each.value.desired_capacity
@@ -43,8 +46,3 @@ resource "aws_eks_node_group" "node_groups" {
 
   }
 
-  remote_access {
-    ec2_ssh_key               = each.value.ssh_key
-    source_security_group_ids = concat(each.value.security_group_ids)
-  }
-}
