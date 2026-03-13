@@ -7,11 +7,6 @@ variable "name_prefix" {
   description = "Launch template name prefix"
 }
 
-variable "key_name" {
-  type        = string
-  description = "Key pair name for EC2"
-}
-
 variable "image_id" {
   type        = string
   description = "AMI ID for the EC2 instance"
