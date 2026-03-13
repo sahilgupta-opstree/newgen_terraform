@@ -174,3 +174,8 @@ variable "eks_addons" {
     version = string
   }))
 }
+
+variable "launch_template_id" {
+  description = "Launch template ID from remote state"
+  type        = string
+}

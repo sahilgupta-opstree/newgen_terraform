@@ -31,6 +31,7 @@ module "node_group" {
   cluster_name      = aws_eks_cluster.eks_cluster.id
   node_role_arn     = aws_iam_role.node_group_role.arn
   node_groups       = var.node_groups
+  launch_template_id = var.launch_template_id  
 }
 
 resource "aws_iam_role" "cluster_role" {
