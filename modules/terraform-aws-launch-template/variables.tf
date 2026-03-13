@@ -18,11 +18,6 @@ variable "instance_type" {
   default     = "t3.micro"
 }
 
-#variable "key_name" {
-#  type        = string
-#  description = "Key pair name for EC2"
-#}
-
 variable "metadata_http_tokens" {
   type        = string
   description = "Metadata version (required: optional | required)"

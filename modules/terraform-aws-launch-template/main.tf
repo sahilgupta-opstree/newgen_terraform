@@ -3,7 +3,6 @@ resource "aws_launch_template" "template" {
   name_prefix   = var.name_prefix
   image_id      = var.image_id
   instance_type = var.instance_type
-  #key_name      = var.key_name
   metadata_options {
     http_tokens   = var.metadata_http_tokens
     http_endpoint = "enabled"
