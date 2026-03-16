@@ -2,11 +2,12 @@ resource "aws_launch_template" "template" {
   region        = var.region
   name_prefix   = var.name_prefix
   instance_type = var.instance_type
-  metadata_options {
-    metadata_http_endpoint      = var.metadata_http_endpoint
-    metadata_http_tokens                 = var.metadata_http_tokens
-    metadata_http_put_response_hop_limit = var.metadata_hop_limit
+   metadata_options {
+    http_endpoint               = var.metadata_http_endpoint
+    http_tokens                 = var.metadata_http_tokens
+    http_put_response_hop_limit = var.metadata_hop_limit
   }
+
 
   block_device_mappings {
     device_name = var.volume_device_name
