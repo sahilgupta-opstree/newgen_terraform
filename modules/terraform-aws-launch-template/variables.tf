@@ -18,10 +18,22 @@ variable "instance_type" {
   default     = "t3.micro"
 }
 
-variable "metadata_http_tokens" {
+variable "metadata_http_endpoint" {
+  description = "Enable or disable instance metadata endpoint"
   type        = string
-  description = "Metadata version (required: optional | required)"
-  default     = "required"  # for both V1 & V2, set to required
+  default     = "enabled"
+}
+
+variable "metadata_http_tokens" {
+  description = "IMDS token requirement (optional = v1+v2, required = only v2)"
+  type        = string
+  default     = "optional"
+}
+
+variable "metadata_hop_limit" {
+  description = "Hop limit for metadata requests"
+  type        = number
+  default     = 2
 }
 
 variable "volume_device_name" {
