@@ -66,3 +66,10 @@ variable "throughput" {
   description = "Throughput for gp3 volumes in MB/s"
   default     = 128
 }
+
+variable "tags" {
+  description = "Tags to apply to AWS resources"
+  type        = map(string)
+
+  default = {}
+}

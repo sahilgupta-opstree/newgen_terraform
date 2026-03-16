@@ -20,4 +20,11 @@ resource "aws_launch_template" "template" {
       throughput            = var.throughput
     }
   }
+
+   tags = {
+    key                 = "var.key_tag"
+    value               = "var.value_tag"
+    propagate_at_launch = "var.propagate_at_launch"
+  }
 }
+
