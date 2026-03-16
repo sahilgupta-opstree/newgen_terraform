@@ -1,6 +1,7 @@
 resource "aws_launch_template" "template" {
   region        = var.region
   name_prefix   = var.name_prefix
+  image_id      = var.image_id
   instance_type = var.instance_type
   metadata_options {
     metadata_http_endpoint      = var.metadata_http_endpoint
