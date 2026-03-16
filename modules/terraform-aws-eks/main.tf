@@ -3,6 +3,10 @@ resource "aws_eks_cluster" "eks_cluster" {
   enabled_cluster_log_types = var.enabled_cluster_log_types
   role_arn                  = aws_iam_role.cluster_role.arn
   version                   = var.eks_cluster_version
+
+  upgrade_policy {
+    support_type = var.support_type
+  }
   tags = merge(
     {
       Name = format("%s-cluster", var.cluster_name)

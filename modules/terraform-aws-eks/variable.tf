@@ -179,3 +179,8 @@ variable "launch_template_id" {
   description = "Launch template ID from remote state"
   type        = string
 }
+
+variable "support_type" {
+  description = "Support type for EKS"
+  type        = string
+}
