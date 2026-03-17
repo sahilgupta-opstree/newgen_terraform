@@ -4,6 +4,10 @@ resource "aws_eks_cluster" "eks_cluster" {
   role_arn                  = aws_iam_role.cluster_role.arn
   version                   = var.eks_cluster_version
 
+  access_config {
+    authentication_mode = var.access_mode
+  }
+
   upgrade_policy {
     support_type = var.support_type
   }

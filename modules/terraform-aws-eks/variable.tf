@@ -184,3 +184,8 @@ variable "support_type" {
   description = "Support type for EKS"
   type        = string
 }
+
+variable access_mode {
+  description = "access mode for EKS"
+  type        = string
+}
