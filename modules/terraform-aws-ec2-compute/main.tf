@@ -28,8 +28,9 @@ resource "aws_instance" "ec2" {
 
   tags = merge(
     {
-      Name        = each.key
+      Name = each.key
     },
+    local.ec2_tags,
     each.value.tags
   )
 }
@@ -47,9 +48,12 @@ resource "aws_ebs_volume" "volume_d" {
   throughput        = each.value.throughput
   encrypted         = each.value.encrypted_volume
 
-  tags = {
-    Name = "${each.key}-volume-d"
-  }
+  tags = merge(
+    {
+      Name = "${each.key}-volume-d"
+    },
+    local.ebs_tags
+  )
 }
 
 resource "aws_volume_attachment" "attach_d" {
@@ -73,9 +77,12 @@ resource "aws_ebs_volume" "volume_e" {
   throughput        = each.value.throughput
   encrypted         = each.value.encrypted_volume
 
-  tags = {
-    Name = "${each.key}-volume-e"
-  }
+  tags = merge(
+    {
+      Name = "${each.key}-volume-e"
+    },
+    local.ebs_tags
+  )
 }
 
 resource "aws_volume_attachment" "attach_e" {
@@ -99,10 +106,14 @@ resource "aws_eip" "eip" {
   instance = aws_instance.ec2[each.key].id
   domain   = "vpc"
 
-  tags = {
-    Name = "${each.key}-eip"
-  }
+  tags = merge(
+    {
+      Name = "${each.key}-eip"
+    },
+    local.eip_tags
+  )
 }
+
 
 ############################################
 # Security Groups
@@ -115,9 +126,12 @@ resource "aws_security_group" "sg" {
   description = "Security Group ${each.value}"
   vpc_id      = var.vpc_id
 
-  tags = {
-    Name = each.value
-  }
+  tags = merge(
+    {
+      Name = each.value
+    },
+    local.sg_tags
+  )
 }
 
 resource "aws_security_group_rule" "ingress_rules" {
@@ -165,11 +179,19 @@ resource "tls_private_key" "instance_keys" {
   rsa_bits  = 4096
 }
 
+
 resource "aws_key_pair" "instance_keys" {
   for_each = var.ec2_instances
 
   key_name   = each.value.key_name
   public_key = tls_private_key.instance_keys[each.key].public_key_openssh
+
+  tags = merge(
+    {
+      Name = "${each.key}-key"
+    },
+    local.common_tags
+  )
 }
 
 resource "local_file" "pem_files" {
@@ -179,3 +201,4 @@ resource "local_file" "pem_files" {
   content         = tls_private_key.instance_keys[each.key].private_key_pem
   file_permission = "0400"
 }
+
