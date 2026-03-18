@@ -1,28 +1,44 @@
 locals {
-  base_name = "${trim(var.program, "-")}"
-    # Only for VPC
-  vpc_tags = {
-    Customer-Code = var.vpc_tags
-  }
-  
+  base_name = trim(var.program, "-")
+
+  # Common tags that will be applied to all resources
+  common_tags = var.tags
+
+  # Only for VPC
+  vpc_tags = merge(
+    var.tags,
+    {
+      Customer-Code = var.vpc_tags
+    }
+  )
+
   # Only for Route Tables
-  route_table_tags = {
-    CC = var.route_table_tags
-  }
-  
+  route_table_tags = merge(
+    var.tags,
+    {
+      CC = var.route_table_tags
+    }
+  )
+
   # Only for Subnets
-  subnet_tags = {
-    Project = var.subnet_tags
-  }
-  
+  subnet_tags = merge(
+    var.tags,
+    {
+      Project = var.subnet_tags
+    }
+  )
+
   # Only for Internet Gateway
-  igw_tags = {
-    CC-Project = var.igw_tags
-  }
+  igw_tags = merge(
+    var.tags,
+    {
+      CC-Project = var.igw_tags
+    }
+  )
 
   subnets = [
     for i in range(length(var.subnet_names)) : {
-      name = var.subnet_names[i]
+      name  = var.subnet_names[i]
       cidr  = var.subnet_cidrs[i]
       az    = var.subnet_azs[i]
       index = i
