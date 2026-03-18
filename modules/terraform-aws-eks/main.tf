@@ -140,16 +140,16 @@ resource "aws_security_group_rule" "cluster_private_access" {
   security_group_id = aws_eks_cluster.eks_cluster.vpc_config[0].cluster_security_group_id
 }
 
-resource "aws_eks_addon" "addons" {
-  count         = length(var.eks_addons)
-  cluster_name  = aws_eks_cluster.eks_cluster.name
-  addon_name    = var.eks_addons[count.index].name
-  addon_version = var.eks_addons[count.index].version
+# resource "aws_eks_addon" "addons" {
+ # count         = length(var.eks_addons)
+ # cluster_name  = aws_eks_cluster.eks_cluster.name
+ # addon_name    = var.eks_addons[count.index].name
+ # addon_version = var.eks_addons[count.index].version
 
-  tags = {
-    Name        = "${var.cluster_name}-${var.eks_addons[count.index].name}-addon"
-    Provisioner = "Terraform"
-  }
+ # tags = {
+ #   Name        = "${var.cluster_name}-${var.eks_addons[count.index].name}-addon"
+ #   Provisioner = "Terraform"
+ # }
 
   depends_on = [aws_eks_cluster.eks_cluster ]
 }

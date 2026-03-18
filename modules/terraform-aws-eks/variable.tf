@@ -167,13 +167,13 @@ variable "enabled_cluster_log_types" {
   default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 }
 
-variable "eks_addons" {
-  description = "List of EKS addons to install"
-  type = list(object({
-    name    = string
-    version = string
-  }))
-}
+#variable "eks_addons" {
+#  description = "List of EKS addons to install"
+#  type = list(object({
+#    name    = string
+#    version = string
+#  }))
+#}
 
 variable "launch_template_id" {
   description = "Launch template ID from remote state"
