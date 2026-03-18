@@ -190,8 +190,8 @@ variable access_mode {
   type        = string
 }
 
-variable "aws_sso_role_arn" {
-  description = "AWS SSO role ARN that needs access to the EKS cluster"
-  type        = string
-  default     = null
-}
+#variable "aws_sso_role_arn" {
+#  description = "AWS SSO role ARN that needs access to the EKS cluster"
+# type        = string
+#  default     = null
+#}
