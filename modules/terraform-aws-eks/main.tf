@@ -164,5 +164,4 @@ resource "aws_eks_access_policy_association" "sso_role_policy" {
     type = "cluster"
   }
 
-  depends_on = [aws_eks_access_entry.sso_role_access]
 }
