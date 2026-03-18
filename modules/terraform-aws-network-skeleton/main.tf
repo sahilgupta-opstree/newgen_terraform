@@ -67,6 +67,7 @@ resource "aws_vpn_gateway" "vgw" {
     {
       Name = var.vgw_name
     },
+    local.common_tags
   )
 }
 
@@ -81,6 +82,7 @@ resource "aws_eip" "nat" {
     {
       Name = "${local.base_name}-nat-eip-${count.index + 1}"
     },
+    local.common_tags
   )
 
   depends_on = [aws_internet_gateway.igw]
@@ -91,13 +93,14 @@ resource "aws_eip" "nat" {
 # ######################################
 resource "aws_nat_gateway" "nat_gateway" {
   count         = var.create_nat_gateway ? var.nat_gateway_count : 0
-  subnet_id = local.all_subnet_ids[count.index]
+  subnet_id     = local.all_subnet_ids[count.index]
   allocation_id = aws_eip.nat[count.index].id
 
   tags = merge(
     {
       Name = "${local.base_name}-nat-${count.index + 1}"
     },
+    local.common_tags
   )
 
   depends_on = [aws_internet_gateway.igw]
@@ -110,7 +113,7 @@ resource "aws_nat_gateway" "nat_gateway" {
 ######################################
 resource "aws_route_table" "rt" {
   for_each = local.route_tables
-  vpc_id = aws_vpc.vpc.id
+  vpc_id   = aws_vpc.vpc.id
 
   tags = merge(
     { Name = each.key },
@@ -147,6 +150,7 @@ resource "aws_network_acl" "nacls" {
     {
       Name = each.value.name
     },
+    local.common_tags
   )
 
   dynamic "ingress" {
@@ -213,6 +217,7 @@ resource "aws_route53_zone" "vpc_route53" {
     {
       Name = "${local.base_name}-route53"
     },
+    local.common_tags
   )
 }
 
@@ -235,6 +240,7 @@ resource "aws_key_pair" "key_pair" {
     {
       Name = "${local.base_name}-key"
     },
+    local.common_tags
   )
 }
 
