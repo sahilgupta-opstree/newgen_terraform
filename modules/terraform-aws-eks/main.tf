@@ -154,15 +154,15 @@ resource "aws_eks_addon" "addons" {
   depends_on = [aws_eks_cluster.eks_cluster ]
 }
 
-#resource "aws_eks_access_policy_association" "sso_role_policy" {
-#  count         = var.aws_sso_role_arn != null ? 1 : 0
-#  cluster_name  = aws_eks_cluster.eks_cluster.name
-#  principal_arn = var.aws_sso_role_arn
-#  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+resource "aws_eks_access_policy_association" "sso_role_policy" {
+  count         = var.aws_sso_role_arn != null ? 1 : 0
+  cluster_name  = aws_eks_cluster.eks_cluster.name
+  principal_arn = var.aws_sso_role_arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 
-#  access_scope {
-#    type = "cluster"
-#  }
+  access_scope {
+    type = "cluster"
+  }
 
-#  depends_on = [aws_eks_access_entry.sso_role_access]
-#}
+  depends_on = [aws_eks_access_entry.sso_role_access]
+}
