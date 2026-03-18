@@ -46,3 +46,33 @@ variable "security_group_ports" {
     name_regex  = string
   }))
 }
+
+variable "program" {
+  type    = string
+  default = ""
+}
+
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
+
+variable "ec2_tags" {
+  type    = string
+  default = ""
+}
+
+variable "ebs_tags" {
+  type    = string
+  default = ""
+}
+
+variable "eip_tags" {
+  type    = string
+  default = ""
+}
+
+variable "sg_tags" {
+  type    = string
+  default = ""
+}
