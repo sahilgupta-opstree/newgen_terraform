@@ -151,5 +151,5 @@ resource "aws_security_group_rule" "cluster_private_access" {
  #   Provisioner = "Terraform"
  # }
 
-  depends_on = [aws_eks_cluster.eks_cluster ]
-}
+  #depends_on = [aws_eks_cluster.eks_cluster ]
+#}
