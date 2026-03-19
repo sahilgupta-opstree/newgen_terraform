@@ -39,10 +39,10 @@ output "bucket_versioning_status" {
 
 output "bucket_sse_algorithm" {
   description = "SSE algorithm used for default encryption"
-value = try([
-  for rule in aws_s3_bucket_server_side_encryption_configuration.encryption[0].rule :
-  rule.apply_server_side_encryption_by_default[0].sse_algorithm
-][0], "None")
+  value = try([
+    for rule in aws_s3_bucket_server_side_encryption_configuration.encryption[0].rule :
+    rule.apply_server_side_encryption_by_default[0].sse_algorithm
+  ][0], "None")
 }
 
 output "logging_target_bucket" {
@@ -83,4 +83,3 @@ output "lb_identifier" {
     if can(statement.principals)
   ][0], null)
 }
-
