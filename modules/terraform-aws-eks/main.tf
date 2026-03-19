@@ -180,3 +180,23 @@ resource "aws_eks_addon" "addons" {
 #YAML
 #  }
 #}
+
+resource "aws_eks_access_entry" "sso_role" {
+  count         = var.aws_sso_role_arn != null ? 1 : 0
+  cluster_name  = aws_eks_cluster.eks_cluster.name
+  principal_arn = var.aws_sso_role_arn
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "sso_role_policy" {
+  count         = var.aws_sso_role_arn != null ? 1 : 0
+  cluster_name  = aws_eks_cluster.eks_cluster.name
+  principal_arn = aws_eks_access_entry.sso_role.principal_arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  
+
+  access_scope {
+    type = "cluster"
+  }
+
+}
