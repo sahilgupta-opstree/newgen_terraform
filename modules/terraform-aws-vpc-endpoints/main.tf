@@ -11,7 +11,7 @@ resource "aws_vpc_endpoint" "this" {
   private_dns_enabled = each.value.type == "Interface" ? try(each.value.private_dns, true) : null
 
   tags = merge(
-    var.common_tags,
+    local.vpc_endpoint_tags,
     try(each.value.tags, {}),
     {
       Name = each.key
