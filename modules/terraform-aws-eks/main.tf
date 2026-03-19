@@ -154,29 +154,29 @@ resource "aws_eks_addon" "addons" {
   depends_on = [aws_eks_cluster.eks_cluster ]
 }
 
-provider "kubernetes" {
-  host                   = aws_eks_cluster.eks_cluster.endpoint
-  cluster_ca_certificate = base64decode(aws_eks_cluster.eks_cluster.certificate_authority[0].data)
+#provider "kubernetes" {
+#  host                   = aws_eks_cluster.eks_cluster.endpoint
+#  cluster_ca_certificate = base64decode(aws_eks_cluster.eks_cluster.certificate_authority[0].data)
 
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    command     = "aws"
-    args        = ["eks", "get-token", "--cluster-name", var.cluster_name]
-  }
-}
+#  exec {
+#    api_version = "client.authentication.k8s.io/v1beta1"
+#    command     = "aws"
+#    args        = ["eks", "get-token", "--cluster-name", var.cluster_name]
+#  }
+#}
 
-resource "kubernetes_config_map" "aws_auth" {
-  metadata {
-    name      = "aws-auth"
-    namespace = "kube-system"
-  }
+#resource "kubernetes_config_map" "aws_auth" {
+#  metadata {
+#    name      = "aws-auth"
+#    namespace = "kube-system"
+#  }
 
-  data = {
-    mapRoles = <<YAML
-- rolearn: ${var.aws_sso_role_arn}
-  username: admin
-  groups:
-    - system:masters
-YAML
-  }
-}
+#  data = {
+#    mapRoles = <<YAML
+#- rolearn: ${var.aws_sso_role_arn}
+#  username: admin
+#  groups:
+#    - system:masters
+#YAML
+#  }
+#}
