@@ -4,6 +4,12 @@ resource "aws_iam_policy" "custom" {
   name        = local.policy_names[each.key]
   description = each.value.description
   policy      = each.value.policy_json
+  tags = merge(
+    local.iam_role_tags,
+    {
+      Name = local.policy_names[each.key]
+    }
+  )
 }
 
 resource "aws_iam_role" "roles" {
@@ -21,6 +27,12 @@ resource "aws_iam_role" "roles" {
       Action = "sts:AssumeRole"
     }]
   })
+  tags = merge(
+    local.iam_role_tags,
+    {
+      Name = local.role_names[each.key]
+    }
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "managed" {
@@ -43,5 +55,3 @@ resource "aws_iam_instance_profile" "this" {
   name = each.key
   role = each.value.name
 }
-
-
