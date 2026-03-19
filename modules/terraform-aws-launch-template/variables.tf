@@ -2,9 +2,9 @@ variable "region" {
   type = string
 }
 
-variable "name_prefix" {
+variable "name" {
   type        = string
-  description = "Launch template name prefix"
+  description = "Launch template name"
 }
 
 variable "instance_type" {
