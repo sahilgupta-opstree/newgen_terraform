@@ -182,21 +182,19 @@ resource "aws_eks_addon" "addons" {
 #}
 
 resource "aws_eks_access_entry" "sso_role" {
-  count         = var.aws_sso_role_arn != null ? 1 : 0
+  for_each      = var.aws_sso_role_arn != null ? { "sso" = var.aws_sso_role_arn } : {}
   cluster_name  = aws_eks_cluster.eks_cluster.name
-  principal_arn = var.aws_sso_role_arn
+  principal_arn = each.value
   type          = "STANDARD"
 }
 
 resource "aws_eks_access_policy_association" "sso_role_policy" {
-  count         = var.aws_sso_role_arn != null ? 1 : 0
+  for_each      = aws_eks_access_entry.sso_role
   cluster_name  = aws_eks_cluster.eks_cluster.name
-  principal_arn = aws_eks_access_entry.sso_role.principal_arn
+  principal_arn = each.value.principal_arn
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-  
 
   access_scope {
     type = "cluster"
   }
-
 }
