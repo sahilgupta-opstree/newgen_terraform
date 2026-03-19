@@ -38,4 +38,11 @@ locals {
     for item in local.custom_policy_attachments :
     item.key => item
   }
+
+  iam_role_tags = merge(
+    var.tags,
+    {
+      Customer-Code = var.iam_role_tags
+    }
+  )
 }
