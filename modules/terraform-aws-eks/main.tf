@@ -154,21 +154,6 @@ resource "aws_eks_addon" "addons" {
   depends_on = [aws_eks_cluster.eks_cluster ]
 }
 
-resource "aws_iam_role" "eks_admin" {
-  name = "${var.cluster_name}-eks-admin"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Principal = {
-        AWS = "arn:aws:iam::069243561461:root"
-      }
-      Action = "sts:AssumeRole"
-    }]
-  })
-}
-
 provider "kubernetes" {
   host                   = aws_eks_cluster.eks_cluster.endpoint
   cluster_ca_certificate = base64decode(aws_eks_cluster.eks_cluster.certificate_authority[0].data)
