@@ -5,14 +5,12 @@ resource "aws_eks_cluster" "eks_cluster" {
   version                   = var.eks_cluster_version
 
   access_config {
-    # ✅ Recommended: use API_AND_CONFIG_MAP for modern access control
     authentication_mode = var.access_mode
   }
 
   upgrade_policy {
     support_type = var.support_type
   }
-
   tags = merge(
     {
       Name = format("%s-cluster", var.cluster_name)
@@ -23,7 +21,6 @@ resource "aws_eks_cluster" "eks_cluster" {
     var.tags,
     var.cluster_tags_only
   )
-
   depends_on = [
     aws_iam_role_policy_attachment.eks-AmazonEKSClusterPolicy,
   ]
@@ -36,20 +33,16 @@ resource "aws_eks_cluster" "eks_cluster" {
 }
 
 module "node_group" {
-  source             = "git::https://github.com/sahilgupta-opstree/newgen_terraform.git//modules/terraform-aws-node-group?ref=feature"
-  create_node_group  = var.create_node_group
-
-  # ⚠️ FIX: Always pass cluster NAME, not ID (EKS expects name)
-  cluster_name       = aws_eks_cluster.eks_cluster.name
-
-  node_role_arn      = aws_iam_role.node_group_role.arn
-  node_groups        = var.node_groups
-  launch_template_id = var.launch_template_id
+  source            = "git::https://github.com/sahilgupta-opstree/newgen_terraform.git//modules/terraform-aws-node-group?ref=feature"
+  create_node_group = var.create_node_group
+  cluster_name      = aws_eks_cluster.eks_cluster.id
+  node_role_arn     = aws_iam_role.node_group_role.arn
+  node_groups       = var.node_groups
+  launch_template_id = var.launch_template_id  
 }
 
 resource "aws_iam_role" "cluster_role" {
   name = "${var.cluster_name}-cluster-role"
-
   assume_role_policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -64,7 +57,6 @@ resource "aws_iam_role" "cluster_role" {
   ]
 }
 POLICY
-
   tags = merge(
     {
       Name = format("%s-cluster_iam_role", var.cluster_name)
@@ -99,7 +91,6 @@ resource "aws_iam_role" "node_group_role" {
     }]
     Version = "2012-10-17"
   })
-
   tags = merge(
     {
       Name = format("%s-node_group_iam_role", var.eks_node_group_name)
@@ -111,7 +102,6 @@ resource "aws_iam_role" "node_group_role" {
   )
 }
 
-# ⚠️ WARNING: This policy is too broad (not recommended for production)
 resource "aws_iam_role_policy_attachment" "node-AmazonEC2FullAccess" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
   role       = aws_iam_role.node_group_role.name
@@ -135,10 +125,8 @@ resource "aws_iam_role_policy_attachment" "node-AmazonEC2ContainerRegistryReadOn
 resource "aws_ec2_tag" "add_tags_into_subnet" {
   count       = length(var.subnets)
   resource_id = var.subnets[count.index]
-
-  # ✅ Required for EKS to recognize subnets
-  key   = "kubernetes.io/cluster/${var.cluster_name}"
-  value = "shared"
+  key         = "kubernetes.io/cluster/${var.cluster_name}"
+  value       = "shared"
 }
 
 resource "aws_security_group_rule" "cluster_private_access" {
@@ -163,28 +151,47 @@ resource "aws_eks_addon" "addons" {
     Provisioner = "Terraform"
   }
 
-  depends_on = [aws_eks_cluster.eks_cluster]
+  depends_on = [aws_eks_cluster.eks_cluster ]
 }
 
-# ✅ Step 1: Create access entry (mandatory before policy association)
-resource "aws_eks_access_entry" "sso_role" {
-  count         = var.aws_sso_role_arn != null ? 1 : 0
-  cluster_name  = aws_eks_cluster.eks_cluster.name
-  principal_arn = var.aws_sso_role_arn
-  type          = "STANDARD"
+resource "aws_iam_role" "eks_admin" {
+  name = "${var.cluster_name}-eks-admin"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        AWS = "arn:aws:iam::069243561461:root"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
 }
 
-# ❌ FIX: Must use [0] because count is used above
-resource "aws_eks_access_policy_association" "sso_role_policy" {
-  count         = var.aws_sso_role_arn != null ? 1 : 0
-  cluster_name  = aws_eks_cluster.eks_cluster.name
+provider "kubernetes" {
+  host                   = aws_eks_cluster.eks_cluster.endpoint
+  cluster_ca_certificate = base64decode(aws_eks_cluster.eks_cluster.certificate_authority[0].data)
 
-  # ⚠️ FIX: index required when using count
-  principal_arn = aws_eks_access_entry.sso_role[0].principal_arn
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    args        = ["eks", "get-token", "--cluster-name", var.cluster_name]
+  }
+}
 
-  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+resource "kubernetes_config_map" "aws_auth" {
+  metadata {
+    name      = "aws-auth"
+    namespace = "kube-system"
+  }
 
-  access_scope {
-    type = "cluster"
+  data = {
+    mapRoles = <<YAML
+- rolearn: ${var.aws_sso_role_arn}
+  username: admin
+  groups:
+    - system:masters
+YAML
   }
 }
