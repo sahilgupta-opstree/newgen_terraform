@@ -145,3 +145,13 @@ variable "egress_rule" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+variable "program" {
+  type    = string
+  default = ""
+}
+
+variable "rds_tags" {
+  type    = string
+  default = ""
+}
