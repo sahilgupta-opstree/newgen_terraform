@@ -1,9 +1,12 @@
 locals {
-  base_name = "${var.env}-${var.app}"
+  base_name = trim(var.program, "-")
 
-  common_tags = {
-    env = var.env
-    owner =  var.owner
-    app = var.app
-  }
+  common_tags = var.tags
+
+  rds_tags = merge(
+    var.tags,
+    {
+      Customer-Code = var.rds_tags
+    }
+  )
 }
