@@ -21,10 +21,6 @@ resource "aws_launch_template" "template" {
     }
   }
 
-   tags = {
-    key                 = "var.key_tag"
-    value               = "var.value_tag"
-    propagate_at_launch = "var.propagate_at_launch"
-  }
+   tags = var.tags
 }
 
