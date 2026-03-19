@@ -10,7 +10,7 @@ variable "name" {
 variable "instance_type" {
   type        = string
   description = "EC2 instance type"
-  default     = "null"
+
 }
 
 variable "metadata_http_endpoint" {
