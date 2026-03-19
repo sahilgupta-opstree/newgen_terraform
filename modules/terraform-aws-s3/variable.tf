@@ -1,3 +1,4 @@
+
 variable "create_bucket" {
   description = "Whether to create the S3 bucket"
   type        = bool
@@ -36,6 +37,18 @@ variable "tags" {
   description = "Tags to apply to the bucket"
   type        = map(string)
   default     = {}
+}
+
+variable "program" {
+  description = "Project/Program name"
+  type        = string
+  default     = ""
+}
+
+variable "s3_tags" {
+  description = "Tag for S3 specific resources"
+  type        = string
+  default     = ""
 }
 
 variable "acl" {
@@ -116,16 +129,16 @@ variable "cors_rules" {
     expose_headers  = optional(list(string))
     max_age_seconds = optional(number)
   }))
-default = [
-  {
-    id              = "AllowWebApp"
-    allowed_methods = ["GET", "POST", "PUT"]
-    allowed_origins = ["*"]
-    allowed_headers = ["*"]
-    expose_headers  = ["ETag"]
-    max_age_seconds = 3000
-  }
-]
+  default = [
+    {
+      id              = "AllowWebApp"
+      allowed_methods = ["GET", "POST", "PUT"]
+      allowed_origins = ["*"]
+      allowed_headers = ["*"]
+      expose_headers  = ["ETag"]
+      max_age_seconds = 3000
+    }
+  ]
 }
 
 variable "server_side_encryption_configuration" {
@@ -166,10 +179,10 @@ variable "versioning" {
 variable "lifecycle_rules" {
   description = "List of lifecycle rules"
   type = list(object({
-    id               = string
-    status           = string
-    expiration_days  = optional(number)
-    transitions      = list(object({
+    id              = string
+    status          = string
+    expiration_days = optional(number)
+    transitions = list(object({
       days          = number
       storage_class = string
     }))
@@ -178,7 +191,7 @@ variable "lifecycle_rules" {
     {
       id     = "log-transition"
       status = "Enabled"
-      
+
       transitions = [
         {
           days          = 30
@@ -250,8 +263,8 @@ variable "crr_enabled" {
 
 variable "replication_destination_bucket" {
   description = "Map of destination buckets for CRR"
-  type = map(string)
-  default = {}
+  type        = map(string)
+  default     = {}
 }
 
 
@@ -260,20 +273,20 @@ variable "replication_destination_bucket" {
 ################################## Naming Convention Variables #########################################
 
 variable "env" {
-  type = string
+  type    = string
   default = "dev"
-  
+
 }
 
 variable "owner" {
-  type = string
+  type    = string
   default = "opstree"
 }
 
 variable "app" {
-  type = string
+  type    = string
   default = "otcloud-kit"
-  
+
 }
 
 variable "instance_sg_id" {
@@ -285,15 +298,15 @@ variable "instance_sg_id" {
 variable "s3_buckets" {
   description = "Map of S3 buckets to create"
   type = map(object({
-    name                        = string
-    force_destroy               = bool
-    control_object_ownership    = bool
-    object_ownership            = string
-    attach_public_policy        = bool
-    block_public_acls           = bool
-    block_public_policy         = bool
-    ignore_public_acls          = bool
-    restrict_public_buckets     = bool
+    name                     = string
+    force_destroy            = bool
+    control_object_ownership = bool
+    object_ownership         = string
+    attach_public_policy     = bool
+    block_public_acls        = bool
+    block_public_policy      = bool
+    ignore_public_acls       = bool
+    restrict_public_buckets  = bool
     versioning = object({
       enabled    = bool
       status     = string
