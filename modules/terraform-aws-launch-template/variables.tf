@@ -7,11 +7,7 @@ variable "name" {
   description = "Launch template name"
 }
 
-variable "instance_type" {
-  type        = string
-  description = "EC2 instance type"
 
-}
 
 variable "metadata_http_endpoint" {
   description = "Enable or disable instance metadata endpoint"
