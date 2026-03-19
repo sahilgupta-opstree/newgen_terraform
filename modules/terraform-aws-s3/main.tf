@@ -5,14 +5,17 @@ data "aws_partition" "current" {}
 
 resource "aws_s3_bucket" "main" {
   count               = local.create_bucket ? 1 : 0
-  bucket = lower("${var.name}-${var.env}-${formatdate("YYYYMMDD-HHmmss", timestamp())}")
+  bucket              = lower("${var.name}-${var.env}")
   bucket_prefix       = var.name == null ? var.bucket_prefix : null
   force_destroy       = var.force_destroy
   object_lock_enabled = var.object_lock_enabled
-  tags = {
-  Name = var.name
+  tags = merge(
+    local.s3_bucket_tags,
+    {
+      Name = var.name
+    }
+  )
 }
-  }
 
 
 resource "aws_s3_bucket_accelerate_configuration" "acceleration" {
@@ -213,7 +216,7 @@ resource "aws_s3_bucket_acl" "bucket_acl" {
 
 
 resource "aws_s3_bucket_cors_configuration" "cors" {
-  count  = local.create_bucket && local.create_bucket_acl && var.object_ownership != "BucketOwnerEnforced" ? 1 : 0
+  count                 = local.create_bucket && local.create_bucket_acl && var.object_ownership != "BucketOwnerEnforced" ? 1 : 0
   bucket                = aws_s3_bucket.main[0].id
   expected_bucket_owner = data.aws_caller_identity.current.account_id
   dynamic "cors_rule" {
@@ -296,7 +299,7 @@ resource "aws_s3_bucket_website_configuration" "website" {
 }
 
 resource "aws_s3_bucket_replication_configuration" "crr" {
-  count  = local.create_bucket && var.crr_enabled ? 1 : 0
+  count = local.create_bucket && var.crr_enabled ? 1 : 0
 
   bucket = aws_s3_bucket.main[0].id
   role   = aws_iam_role.replication.arn
@@ -331,10 +334,16 @@ resource "aws_iam_role" "replication" {
       }
     ]
   })
+  tags = merge(
+    local.s3_bucket_tags,
+    {
+      Name = lower("${var.name}-replication-role")
+    }
+  )
 }
 
 resource "aws_iam_role_policy" "replication_policy" {
-  for_each = var.s3_buckets   # iterate over all buckets
+  for_each = var.s3_buckets # iterate over all buckets
 
   name = "${each.value.name}-replication-role"
   role = aws_iam_role.replication[each.key].id
