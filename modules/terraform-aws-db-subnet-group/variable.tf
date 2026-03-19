@@ -13,3 +13,13 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "program" {
+  type    = string
+  default = ""
+}
+
+variable "db_subnet_group_tags" {
+  type    = string
+  default = ""
+}
