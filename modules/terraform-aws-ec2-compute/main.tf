@@ -202,3 +202,8 @@ resource "local_file" "pem_files" {
   file_permission = "0400"
 }
 
+variable "source_dest_check" {
+  description = "Enable or disable source/destination check for instances"
+  type        = bool
+  default     = true
+}
