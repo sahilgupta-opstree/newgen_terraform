@@ -162,7 +162,7 @@ resource "aws_eks_addon" "addons" {
   addon_name    = var.eks_addons[count.index].name
   addon_version = var.eks_addons[count.index].version
 
-  tags = mrger({
+  tags = merge({
     Name        = "${var.cluster_name}-${var.eks_addons[count.index].name}-addon"
   },
    local.common_tags
