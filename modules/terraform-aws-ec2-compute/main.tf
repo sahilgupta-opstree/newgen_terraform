@@ -5,15 +5,15 @@
 resource "aws_instance" "ec2" {
   for_each = var.ec2_instances
 
-  ami                         = each.value.ami_id
-  instance_type               = each.value.instance_type
-  subnet_id                   = each.value.subnet_id
+  ami           = each.value.ami_id
+  instance_type = each.value.instance_type
+  subnet_id     = each.value.subnet_id
   vpc_security_group_ids = [
     for sg_name in each.value.security_groups :
     aws_security_group.sg[sg_name].id
   ]
   associate_public_ip_address = each.value.public_ip
-  key_name = aws_key_pair.instance_keys[each.key].key_name
+  key_name                    = aws_key_pair.instance_keys[each.key].key_name
   iam_instance_profile        = lookup(each.value, "iam_instance_profile", null)
 
   disable_api_termination = each.value.termination_protection
@@ -30,7 +30,7 @@ resource "aws_instance" "ec2" {
     {
       Name = each.key
     },
-    local.ec2_tags,
+    local.common_tags,
     each.value.tags
   )
 }
@@ -52,7 +52,7 @@ resource "aws_ebs_volume" "volume_d" {
     {
       Name = "${each.key}-volume-d"
     },
-    local.ebs_tags
+    local.common_tags
   )
 }
 
@@ -81,7 +81,7 @@ resource "aws_ebs_volume" "volume_e" {
     {
       Name = "${each.key}-volume-e"
     },
-    local.ebs_tags
+    local.common_tags
   )
 }
 
@@ -110,10 +110,9 @@ resource "aws_eip" "eip" {
     {
       Name = "${each.key}-eip"
     },
-    local.eip_tags
+    local.common_tags
   )
 }
-
 
 ############################################
 # Security Groups
@@ -130,7 +129,7 @@ resource "aws_security_group" "sg" {
     {
       Name = each.value
     },
-    local.sg_tags
+    local.common_tags
   )
 }
 
@@ -179,7 +178,6 @@ resource "tls_private_key" "instance_keys" {
   rsa_bits  = 4096
 }
 
-
 resource "aws_key_pair" "instance_keys" {
   for_each = var.ec2_instances
 
@@ -201,4 +199,3 @@ resource "local_file" "pem_files" {
   content         = tls_private_key.instance_keys[each.key].private_key_pem
   file_permission = "0400"
 }
-
