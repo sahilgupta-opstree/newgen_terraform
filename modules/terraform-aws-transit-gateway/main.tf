@@ -1,29 +1,8 @@
-
-resource "aws_ec2_transit_gateway" "this" {
-  description                          = var.description
-  amazon_side_asn                     = var.amazon_side_asn
-  auto_accept_shared_attachments      = var.auto_accept_shared_attachments
-  default_route_table_association     = var.default_route_table_association
-  default_route_table_propagation     = var.default_route_table_propagation
-  dns_support                         = var.dns_support
-  multicast_support                   = var.multicast_support
-  vpn_ecmp_support                    = var.vpn_ecmp_support
-  security_group_referencing_support = var.security_group_referencing_support
-  transit_gateway_cidr_blocks         = var.transit_gateway_cidr_blocks
-
-#   tags = merge(
-#     {
-#       Name = "${local.base_name}-tgw"
-#     },
-#     local.common_tags
-#   )
-}
-
-resource "aws_ec2_transit_gateway_vpc_attachment" "this" {
+resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_attachment" {
   for_each = { for vpc in var.vpc_attachments : vpc.name => vpc }
 
   subnet_ids         = each.value.subnet_ids
-  transit_gateway_id = aws_ec2_transit_gateway.this.id
+  transit_gateway_id = data.aws_ec2_transit_gateway.existing_tgw.id
   vpc_id             = each.value.vpc_id
 
   dns_support                            = each.value.dns_support
@@ -45,11 +24,11 @@ resource "aws_route" "tgw_routes" {
 
   route_table_id         = each.value.route_table_id
   destination_cidr_block = var.tgw_route_cidr_block
-  transit_gateway_id     = aws_ec2_transit_gateway.this.id
+  transit_gateway_id     = aws_ec2_transit_gateway.tgw.id
 
   # Ensures TGW and all attachments are created before adding the route
   depends_on = [
-    aws_ec2_transit_gateway.this,
-    aws_ec2_transit_gateway_vpc_attachment.this
+    aws_ec2_transit_gateway.tgw,
+    aws_ec2_transit_gateway_vpc_attachment.tgw_attachment
   ]
 }
