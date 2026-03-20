@@ -15,11 +15,7 @@ resource "aws_eks_cluster" "eks_cluster" {
     {
       Name = format("%s-cluster", var.cluster_name)
     },
-    {
-      "Provisioner" = "Terraform"
-    },
-    var.tags,
-    var.cluster_tags_only
+    local.common_tags
   )
   depends_on = [
     aws_iam_role_policy_attachment.eks-AmazonEKSClusterPolicy,
@@ -30,6 +26,7 @@ resource "aws_eks_cluster" "eks_cluster" {
     endpoint_private_access = var.endpoint_private
     endpoint_public_access  = var.endpoint_public
   }
+  
 }
 
 module "node_group" {
@@ -61,10 +58,7 @@ POLICY
     {
       Name = format("%s-cluster_iam_role", var.cluster_name)
     },
-    {
-      "Provisioner" = "Terraform"
-    },
-    var.tags
+    local.common_tags
   )
 }
 
@@ -95,10 +89,7 @@ resource "aws_iam_role" "node_group_role" {
     {
       Name = format("%s-node_group_iam_role", var.eks_node_group_name)
     },
-    {
-      "Provisioner" = "Terraform"
-    },
-    var.tags
+    local.common_tags
   )
 
 }
@@ -171,11 +162,11 @@ resource "aws_eks_addon" "addons" {
   addon_name    = var.eks_addons[count.index].name
   addon_version = var.eks_addons[count.index].version
 
-  tags = {
+  tags = mrger({
     Name        = "${var.cluster_name}-${var.eks_addons[count.index].name}-addon"
-    Provisioner = "Terraform"
-  }
-
+  },
+   local.common_tags
+  )
   depends_on = [aws_eks_cluster.eks_cluster ]
 }
 
