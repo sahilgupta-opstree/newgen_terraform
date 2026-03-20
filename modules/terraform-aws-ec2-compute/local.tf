@@ -1,33 +1,7 @@
 locals {
-  base_name = trim(var.program, "-")
+  # base_name is derived from the "Name" key in var.tags (set per-resource in tfvars)
+  base_name = lookup(var.tags, "Name", "")
 
-  common_tags = var.tags
-
-  ec2_tags = merge(
-    var.tags,
-    {
-      Customer-Code = var.ec2_tags
-    }
-  )
-
-  ebs_tags = merge(
-    var.tags,
-    {
-      Project = var.ebs_tags
-    }
-  )
-
-  sg_tags = merge(
-    var.tags,
-    {
-      CC = var.sg_tags
-    }
-  )
-
-  eip_tags = merge(
-    var.tags,
-    {
-      CC-Project = var.eip_tags
-    }
-  )
+  # common_tags strips the "Name" key so each resource can set its own Name tag
+  common_tags = { for k, v in var.tags : k => v if k != "Name" }
 }
