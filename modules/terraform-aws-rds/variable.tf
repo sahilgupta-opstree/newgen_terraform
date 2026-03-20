@@ -70,21 +70,6 @@ variable "publicly_accessible" {
   type        = bool
 }
 
-# Environment / tagging
-variable "env" {
-  description = "Environment name (dev, qa, prod)"
-  type        = string
-}
-
-variable "app" {
-  description = "Application name"
-  type        = string
-}
-
-variable "owner" {
-  description = "Owner of the resource"
-  type        = string
-}
 
 # Security group
 variable "name_sg" {
@@ -97,11 +82,6 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "provisioner" {
-  description = "Provisioner name for tagging"
-  type        = string
-  default     = "Terraform"
-}
 
 variable "tags" {
   description = "Additional tags for resources"
@@ -146,12 +126,3 @@ variable "egress_rule" {
   }
 }
 
-variable "program" {
-  type    = string
-  default = ""
-}
-
-variable "rds_tags" {
-  type    = string
-  default = ""
-}

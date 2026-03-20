@@ -25,7 +25,7 @@ variable "security_groups" {
 }
 
 variable "vpc_id" {
-  type = string
+  type        = string
   description = "VPC ID for security groups"
 }
 
@@ -41,39 +41,14 @@ variable "firewall_instance_key" {
 variable "security_group_ports" {
   description = "Ingress port configuration mapped to SG name patterns"
   type = map(object({
-    from_port   = number
-    to_port     = number
-    protocol    = string
-    name_regex  = string
+    from_port  = number
+    to_port    = number
+    protocol   = string
+    name_regex = string
   }))
-}
-
-variable "program" {
-  type    = string
-  default = ""
 }
 
 variable "tags" {
   type    = map(string)
   default = {}
-}
-
-variable "ec2_tags" {
-  type    = string
-  default = ""
-}
-
-variable "ebs_tags" {
-  type    = string
-  default = ""
-}
-
-variable "eip_tags" {
-  type    = string
-  default = ""
-}
-
-variable "sg_tags" {
-  type    = string
-  default = ""
 }
