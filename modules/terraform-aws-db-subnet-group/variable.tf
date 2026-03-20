@@ -11,15 +11,4 @@ variable "subnet_ids" {
 variable "tags" {
   description = "Tags for DB subnet group"
   type        = map(string)
-  default     = {}
-}
-
-variable "program" {
-  type    = string
-  default = ""
-}
-
-variable "db_subnet_group_tags" {
-  type    = string
-  default = ""
 }
