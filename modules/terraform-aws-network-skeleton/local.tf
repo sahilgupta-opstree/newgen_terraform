@@ -1,40 +1,41 @@
 locals {
-  base_name = trim(var.program, "-")
+  # base_name is derived from the "Name" key in var.tags (set per-resource in tfvars)
+  base_name = lookup(var.tags, "Name", "")
 
-  # Common tags that will be applied to all resources
-  common_tags = var.tags
+  # common_tags strips the "Name" key so each resource can set its own Name tag
+  common_tags = { for k, v in var.tags : k => v if k != "Name" }
 
-  # Only for VPC
-  vpc_tags = merge(
-    var.tags,
-    {
-      Customer-Code = var.vpc_tags
-    }
-  )
+  # # Only for VPC
+  # vpc_tags = merge(
+  #   var.tags,
+  #   {
+  #     Customer-Code = var.vpc_tags
+  #   }
+  # )
 
-  # Only for Route Tables
-  route_table_tags = merge(
-    var.tags,
-    {
-      CC = var.route_table_tags
-    }
-  )
+  # # Only for Route Tables
+  # route_table_tags = merge(
+  #   var.tags,
+  #   {
+  #     CC = var.route_table_tags
+  #   }
+  # )
 
-  # Only for Subnets
-  subnet_tags = merge(
-    var.tags,
-    {
-      Project = var.subnet_tags
-    }
-  )
+  # # Only for Subnets
+  # subnet_tags = merge(
+  #   var.tags,
+  #   {
+  #     Project = var.subnet_tags
+  #   }
+  # )
 
-  # Only for Internet Gateway
-  igw_tags = merge(
-    var.tags,
-    {
-      CC-Project = var.igw_tags
-    }
-  )
+  # # Only for Internet Gateway
+  # igw_tags = merge(
+  #   var.tags,
+  #   {
+  #     CC-Project = var.igw_tags
+  #   }
+  # )
 
   subnets = [
     for i in range(length(var.subnet_names)) : {

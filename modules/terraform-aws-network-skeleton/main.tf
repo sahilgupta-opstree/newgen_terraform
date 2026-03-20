@@ -7,11 +7,10 @@ resource "aws_vpc" "vpc" {
   enable_dns_support   = var.enable_dns_support
   enable_dns_hostnames = var.enable_dns_hostnames
 
+  # Name tag uses vpc_name variable; all other common tags (Environment, Project, etc.) are merged in
   tags = merge(
-    {
-      Name = "${local.base_name}"
-    },
-    local.vpc_tags
+    { Name = var.vpc_name },
+    local.common_tags
   )
 }
 
@@ -29,7 +28,7 @@ resource "aws_subnet" "subnets" {
     {
       Name = local.subnets[count.index].name
     },
-    local.subnet_tags
+    local.common_tags
   )
 }
 
@@ -37,14 +36,12 @@ resource "aws_subnet" "subnets" {
 # Internet Gateway
 ######################################
 resource "aws_internet_gateway" "igw" {
-
   vpc_id = aws_vpc.vpc.id
 
+  # Name tag uses internet_gateway_name variable; all other common tags are merged in
   tags = merge(
-    {
-      Name = "${local.base_name}-igw"
-    },
-    local.igw_tags
+    { Name = var.internet_gateway_name },
+    local.common_tags
   )
 }
 
@@ -63,10 +60,9 @@ resource "aws_vpn_gateway" "vgw" {
 
   vpc_id = aws_vpc.vpc.id
 
+  # Name tag uses vgw_name variable; all other common tags are merged in
   tags = merge(
-    {
-      Name = var.vgw_name
-    },
+    { Name = var.vgw_name },
     local.common_tags
   )
 }
@@ -78,10 +74,9 @@ resource "aws_eip" "nat" {
   count  = var.create_nat_gateway ? var.nat_gateway_count : 0
   domain = "vpc"
 
+  # Name tag uses vpc_name as prefix for EIP; all other common tags are merged in
   tags = merge(
-    {
-      Name = "${local.base_name}-nat-eip-${count.index + 1}"
-    },
+    { Name = "${var.vpc_name}-nat-eip-${count.index + 1}" },
     local.common_tags
   )
 
@@ -96,10 +91,9 @@ resource "aws_nat_gateway" "nat_gateway" {
   subnet_id     = local.all_subnet_ids[count.index]
   allocation_id = aws_eip.nat[count.index].id
 
+  # Name tag uses vpc_name as prefix for NAT Gateway; all other common tags are merged in
   tags = merge(
-    {
-      Name = "${local.base_name}-nat-${count.index + 1}"
-    },
+    { Name = "${var.vpc_name}-nat-${count.index + 1}" },
     local.common_tags
   )
 
@@ -115,10 +109,10 @@ resource "aws_route_table" "rt" {
   for_each = local.route_tables
   vpc_id   = aws_vpc.vpc.id
 
+  # Name tag uses the route table key (from route_table_names); all other common tags are merged in
   tags = merge(
     { Name = each.key },
-    #local.common_tags,
-    local.route_table_tags
+    local.common_tags
   )
 }
 
@@ -146,10 +140,9 @@ resource "aws_network_acl" "nacls" {
   vpc_id     = aws_vpc.vpc.id
   subnet_ids = each.value.subnet_ids
 
+  # Name tag uses the NACL name from nacl_names; all other common tags are merged in
   tags = merge(
-    {
-      Name = each.value.name
-    },
+    { Name = each.value.name },
     local.common_tags
   )
 
@@ -213,10 +206,9 @@ resource "aws_route53_zone" "vpc_route53" {
     vpc_id = aws_vpc.vpc.id
   }
 
+  # Name tag uses vpc_name as prefix for Route53 zone; all other common tags are merged in
   tags = merge(
-    {
-      Name = "${local.base_name}-route53"
-    },
+    { Name = "${var.vpc_name}-route53" },
     local.common_tags
   )
 }
@@ -236,10 +228,9 @@ resource "aws_key_pair" "key_pair" {
   key_name   = var.key_pair_name
   public_key = var.create_private_key ? tls_private_key.ec2_key[0].public_key_openssh : file(var.public_key_path)
 
+  # Name tag uses key_pair_name variable; all other common tags are merged in
   tags = merge(
-    {
-      Name = "${local.base_name}-key"
-    },
+    { Name = var.key_pair_name },
     local.common_tags
   )
 }

@@ -1,36 +1,18 @@
-variable "vpc_tags" {
-  type = string
-  default = ""
-  
-}
-
-variable "program" {
-  type = string
-  default = ""
-  
-}
-
-variable "route_table_tags" {
-  type = string
-  default = ""
-  
-}
-
-variable "subnet_tags" {
-  type = string
-  default = ""
-  
-}
-
-variable "igw_tags" {
-  type = string
-  default = ""
-  
-}
-
-
+# Replaced var.Name with vpc_name and internet_gateway_name for explicit per-resource naming
 
 ###################### VPC Configuration ####################
+
+variable "vpc_name" {
+  type        = string
+  description = "Name of the VPC"
+  default     = ""
+}
+
+variable "internet_gateway_name" {
+  type        = string
+  description = "Name of the Internet Gateway"
+  default     = ""
+}
 
 variable "vpc_cidr" {
   type        = string
