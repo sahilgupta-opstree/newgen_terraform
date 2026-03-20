@@ -5,10 +5,8 @@ resource "aws_iam_policy" "custom" {
   description = each.value.description
   policy      = each.value.policy_json
   tags = merge(
-    local.iam_role_tags,
-    {
-      Name = local.policy_names[each.key]
-    }
+    { Name = local.policy_names[each.key] },
+    local.common_tags
   )
 }
 
@@ -28,10 +26,8 @@ resource "aws_iam_role" "roles" {
     }]
   })
   tags = merge(
-    local.iam_role_tags,
-    {
-      Name = local.role_names[each.key]
-    }
+    { Name = local.role_names[each.key] },
+    local.common_tags
   )
 }
 
