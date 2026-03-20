@@ -4,8 +4,8 @@ resource "aws_db_subnet_group" "this" {
 
   tags = merge(
     {
-      Name = "${local.base_name}"
+      Name = var.name
     },
-    local.db_subnet_group_tags
+    local.common_tags
   )
 }
