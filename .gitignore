@@ -53,3 +53,4 @@ Thumbs.db
 # =========================
 *.log
 
+modules/terraform-aws-transit-gateway/
