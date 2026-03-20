@@ -4,6 +4,12 @@ variable "transit_gateway_name" {
   default     = "prod-tgw"
 }
 
+variable "tgw_arn" {
+  description = "The ARN of the existing Transit Gateway"
+  type        = string
+  default     = "arn:aws:ec2:us-east-1:069243561461:transit-gateway/tgw-12345678"  # Replace with your actual ARN
+}
+
 variable "tags" {
   type        = map(string)
   description = "Tags to apply to all resources"
