@@ -100,11 +100,36 @@ resource "aws_iam_role" "node_group_role" {
     },
     var.tags
   )
+
 }
 
-resource "aws_iam_role_policy_attachment" "node-AmazonEC2FullAccess" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
-  role       = aws_iam_role.node_group_role.name
+resource "aws_iam_role_policy" "node_group_s3_policy" {
+  name = "${var.cluster_name}-node-s3-policy"
+  role = aws_iam_role.node_group_role.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = "s3:List*"
+        Effect   = "Allow"
+        Resource = "*"
+      },
+      {
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:ListBucket",
+          "s3:DeleteObject"
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:s3:::1111-s3-dev-s1-1",
+          "arn:aws:s3:::1111-s3-dev-s1-1/*"
+        ]
+      }
+    ]
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "node-AmazonEKS_CNI_Policy" {
