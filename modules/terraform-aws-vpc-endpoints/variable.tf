@@ -20,17 +20,17 @@ variable "endpoints" {
   }))
 }
 
-variable "program" {
-  description = "Project/Program name"
-  type        = string
-  default     = ""
-}
+# variable "program" {
+#   description = "Project/Program name"
+#   type        = string
+#   default     = ""
+# }
 
-variable "vpc_endpoint_tags" {
-  description = "Tag for VPC endpoint specific resources"
-  type        = string
-  default     = ""
-}
+# variable "vpc_endpoint_tags" {
+#   description = "Tag for VPC endpoint specific resources"
+#   type        = string
+#   default     = ""
+# }
 
 variable "tags" {
   description = "Common tags applied to all endpoints"
