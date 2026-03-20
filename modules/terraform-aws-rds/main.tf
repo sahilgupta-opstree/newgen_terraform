@@ -14,8 +14,7 @@ resource "aws_rds_cluster" "rds" {
     {
       Name = var.cluster_identifier
     },
-    local.rds_tags,
-    var.tags
+    local.common_tags
   )
 }
 
@@ -32,7 +31,6 @@ resource "aws_rds_cluster_instance" "rds_instance" {
     {
       Name = "${var.cluster_identifier}-${count.index + 1}"
     },
-    local.rds_tags,
-    var.tags
+    local.common_tags
   )
 }
