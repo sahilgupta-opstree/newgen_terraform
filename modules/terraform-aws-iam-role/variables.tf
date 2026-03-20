@@ -23,18 +23,6 @@ variable "assume_role_service" {
   type        = string
 }
 
-variable "program" {
-  description = "Project/Program name"
-  type        = string
-  default     = ""
-}
-
-variable "iam_role_tags" {
-  description = "Tag for IAM role specific resources"
-  type        = string
-  default     = ""
-}
-
 variable "tags" {
   description = "Common tags for all resources"
   type        = map(string)
