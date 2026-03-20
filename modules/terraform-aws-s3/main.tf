@@ -5,15 +5,13 @@ data "aws_partition" "current" {}
 
 resource "aws_s3_bucket" "main" {
   count               = local.create_bucket ? 1 : 0
-  bucket              = lower("${var.name}-${var.env}")
+  bucket              = lower(var.name)
   bucket_prefix       = var.name == null ? var.bucket_prefix : null
   force_destroy       = var.force_destroy
   object_lock_enabled = var.object_lock_enabled
   tags = merge(
-    local.s3_bucket_tags,
-    {
-      Name = var.name
-    }
+    { Name = var.name },
+    local.common_tags
   )
 }
 
@@ -335,10 +333,8 @@ resource "aws_iam_role" "replication" {
     ]
   })
   tags = merge(
-    local.s3_bucket_tags,
-    {
-      Name = lower("${var.name}-replication-role")
-    }
+    { Name = lower("${var.name}-replication-role") },
+    local.common_tags
   )
 }
 
