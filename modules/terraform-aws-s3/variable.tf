@@ -39,17 +39,17 @@ variable "tags" {
   default     = {}
 }
 
-variable "program" {
-  description = "Project/Program name"
-  type        = string
-  default     = ""
-}
+# variable "program" {
+#   description = "Project/Program name"
+#   type        = string
+#   default     = ""
+# }
 
-variable "s3_tags" {
-  description = "Tag for S3 specific resources"
-  type        = string
-  default     = ""
-}
+# variable "s3_tags" {
+#   description = "Tag for S3 specific resources"
+#   type        = string
+#   default     = ""
+# }
 
 variable "acl" {
   description = "Canned ACL to apply"
@@ -272,22 +272,22 @@ variable "replication_destination_bucket" {
 
 ################################## Naming Convention Variables #########################################
 
-variable "env" {
-  type    = string
-  default = "dev"
-
-}
+# variable "env" {
+#   type    = string
+#   default = "dev"
+#
+# }
 
 variable "owner" {
   type    = string
   default = "opstree"
 }
 
-variable "app" {
-  type    = string
-  default = "otcloud-kit"
-
-}
+# variable "app" {
+#   type    = string
+#   default = "otcloud-kit"
+#
+# }
 
 variable "instance_sg_id" {
   type        = string
