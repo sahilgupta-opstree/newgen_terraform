@@ -1,14 +1,3 @@
-variable "transit_gateway_name" {
-  type        = string
-  description = "Name tag for the Transit Gateway"
-  default     = "prod-tgw"
-}
-
-variable "tgw_id" {
-  description = "The ID of the existing Transit Gateway"
-  type        = string
-}
-
 variable "tags" {
   type        = map(string)
   description = "Tags to apply to all resources"
