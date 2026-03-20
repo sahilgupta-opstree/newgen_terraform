@@ -195,3 +195,9 @@ variable "aws_sso_role_arn" {
  type        = string
   default     = null
 }
+
+variable "access_entries" {
+  description = "Map of additional IAM role ARNs to grant EKS cluster access with AmazonEKSClusterAdminPolicy"
+  type        = map(string)
+  default     = {}
+}

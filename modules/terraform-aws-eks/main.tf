@@ -214,3 +214,22 @@ resource "aws_eks_access_policy_association" "sso_role_policy" {
     type = "cluster"
   }
 }
+
+# Additional IAM roles granted cluster access via access_entries variable
+resource "aws_eks_access_entry" "additional" {
+  for_each      = var.access_entries
+  cluster_name  = aws_eks_cluster.eks_cluster.name
+  principal_arn = each.value
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "additional_policy" {
+  for_each      = aws_eks_access_entry.additional
+  cluster_name  = aws_eks_cluster.eks_cluster.name
+  principal_arn = each.value.principal_arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+  access_scope {
+    type = "cluster"
+  }
+}
